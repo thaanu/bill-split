@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let sharedServiceCharge = 0;
     let sharedDiscountAmount = 0;
 
+    // Toastr config
+    toastr.options.hideMethod = 'slideUp';
+    toastr.options.positionClass = 'toast-bottom-center';
+
     function isNumber(str) {
         if (isNaN(str)) {
             return false;
@@ -150,10 +154,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 removeFriendBtns[i].addEventListener('click', function (ex) {
                     ex.preventDefault();
                     let friendIndex = removeFriendBtns[i].dataset.friendIndex;
+                    let friendName = friends[friendIndex].name;
                     friends.splice(friendIndex, 1);
                     calculate(); // Recalculate amounts
                     showFriends(); // Refresh friends list
-                    console.dir('friend removed', friends);
+                    toastr.success(`${friendName} removed`);
                 });
             }
 
@@ -209,9 +214,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="card my-3">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-4">${i+1}. <input type="text" data-field-type="description" data-item-index="${i}" value="${items[i].description}" class="form-control item-field" autocomplete="off" /></div>
-                                <div class="col-4"><input type="text" data-field-type="amount" data-item-index="${i}" value="${items[i].amount}" class="form-control item-field" autocomplete="off" /></div>
-                                <div class="col-4">
+                                <div class="col-8"><input type="text" data-field-type="description" data-item-index="${i}" value="${items[i].description}" class="form-control item-field" autocomplete="off" placeholder="Description" /></div>
+                                <div class="col-4"><input type="text" data-field-type="amount" data-item-index="${i}" value="${items[i].amount}" class="form-control item-field" autocomplete="off" placeholder="Amount" /></div>
+                                <div class="col-12 mt-3">
                                     <button type="button" data-item-index="${i}" class="remove-item-btn btn btn-light"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
