@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    let sharedItems = [];
     let friends = [];
     let gstAmount = 0;
     let serviceCharge = 0;
@@ -18,6 +19,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isNaN(str)) {
             return false;
         }
+        return true;
+    }
+
+    function validateKey(keyCode) {
+        if (keyCode == 9 || keyCode == 13) { return false; }
         return true;
     }
 
@@ -105,6 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
 
             }
+        } else {
+            h = `<em>No Friends</em>`;
         }
         document.querySelector('#friends-list').innerHTML = h;
 
@@ -226,6 +234,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         }
+        else {
+            h = `<em>No Items</em>`;
+        }
         offCanvas.querySelector('#item-list').innerHTML = h;
 
         // Remove Item
@@ -237,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (itemFields.length > 0) {
             itemFields.forEach(field => {
                 field.addEventListener('keyup', function (e) {
-                    if (e.keyCode == 9 || e.keyCode == 13) { return false; }
+                    if (!validateKey(e.keyCode)) { return false; }
                     let itemIndex = field.dataset.itemIndex;
                     let fieldType = field.dataset.fieldType;
                     let value = field.value;
@@ -280,9 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {
     for (let i = 0; i < lookupFields.length; i++) {
         lookupFields[i].addEventListener('keyup', function (e) {
 
-            if (e.keyCode == 9 || e.keyCode == 13) {
-                return false;
-            }
+            if (!validateKey(e.keyCode)) { return false; }
 
             let field = e.target.id;
             let amount = e.target.value;
@@ -371,5 +380,48 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     });
+
+
+    // Shared items
+    document.querySelector('#shared-item-init-btn').addEventListener('click', function (e) {
+
+        const bsOffCanvas = new bootstrap.Offcanvas(offCanvas);
+        offCanvas.querySelector('#offcanvasLabel').innerHTML = 'Shared Item';
+
+        const html = `
+            <div class="mb-3">
+                <label class="form-label" for="item-name">Item Name</label>
+                <input type="text" id="item-name" class="form-control" autocomplete="off" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="item-price">Item Price</label>
+                <input type="text" id="item-price" class="form-control" autocomplete="off" />
+            </div>
+            <button type="button" id="add-shared-item-btn" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Shared Item</button>
+        `;
+
+        offCanvas.querySelector('.offcanvas-body').innerHTML = html;
+
+        bsOffCanvas.show();
+
+        // let lastFriendIndex = 0;
+
+        // offCanvas.querySelector('#add-shared-item-btn').addEventListener('click', function (ex) {
+        //     let friendName = offCanvas.querySelector('#friend-name').value;
+        //     if (friendName == '') {
+        //         toastr.error("Please enter friend name");
+        //     } else {
+        //         addFriend(friendName);
+        //         lastFriendIndex = friends.length - 1;
+        //         stepTwo = stepTwo.replace('{::FRIEND_NAME::}', friendName);
+        //         offCanvas.querySelector('.offcanvas-body').innerHTML = stepTwo;
+        //         addItem(lastFriendIndex);
+        //         toastr.success(`${friendName} added`);
+        //     }
+        // });
+
+    });
+
+    showFriends();
 
 });
