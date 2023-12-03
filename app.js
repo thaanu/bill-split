@@ -142,17 +142,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Validate 
                 if (itemName.value == '') {
-                    alert("Please enter item name");
+                    toastr.error('Please enter item name');
                     return false;
                 }
 
                 if (amount.value == '') {
-                    alert("Please enter amount. Amount cannot be below 0.")
+                    toastr.error('Please enter amount. Amount cannot be below 0.');
                     return false;
                 }
 
                 if (!isNumber(Math.floor(amount.value))) {
-                    alert("Amount must be a number");
+                    toastr.error('Amount must be a number');
                     return false;
                 }
 
@@ -160,12 +160,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     "description": itemName.value,
                     "amount": amount.value
                 });
+                toastr.success(`${itemName.value} added`);
                 itemName.value = '';
                 amount.value = '';
-                console.log('item added', friends);
                 showItems(friendIndex);
                 calculate(); // Recalculate amounts
                 showFriends(); // Refresh friends list
+
             });
         }
     }
@@ -291,13 +292,14 @@ document.addEventListener("DOMContentLoaded", function () {
         offCanvas.querySelector('#add-friend-btn').addEventListener('click', function (ex) {
             let friendName = offCanvas.querySelector('#friend-name').value;
             if (friendName == '') {
-                alert("please enter friend name");
+                toastr.error("Please enter friend name");
             } else {
                 addFriend(friendName);
                 lastFriendIndex = friends.length - 1;
                 stepTwo = stepTwo.replace('{::FRIEND_NAME::}', friendName);
                 offCanvas.querySelector('.offcanvas-body').innerHTML = stepTwo;
                 addItem(lastFriendIndex);
+                toastr.success(`${friendName} added`);
             }
         });
 
