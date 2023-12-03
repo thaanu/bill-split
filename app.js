@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showFriendTotal(amount) {
-        return 'MVR ' + (Math.round(totalAmount * 100) / 100).toFixed(2);
+        return 'MVR ' + (Math.round(amount * 100) / 100).toFixed(2);
     }
 
     function zeroCorrection(amount) {
@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
             "items": [],
             "shared": []
         });
-        console.log('friend added', friends);
         showFriends();
     }
 
@@ -104,6 +103,34 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         document.querySelector('#friends-list').innerHTML = h;
+
+        if ( friends.length > 0 ) {
+
+            // Update friend
+            // let updateBtns = document.querySelectorAll('.update')
+            // for ( let i = 0; i < friends.length; i++ ) {
+
+            // }
+
+            // Remove friend
+            let removeFriendBtns = document.querySelectorAll('.remove-friend-btn');
+            for ( let i = 0; i < removeFriendBtns.length; i++ ) {
+                removeFriendBtns[i].addEventListener('click', function(ex) {
+                    ex.preventDefault();
+                    let friendIndex = removeFriendBtns[i].dataset.friendIndex;
+                    if ( friendIndex === undefined ) {
+                        alert(`unable to remove friend ${friendIndex}`);
+                        return false;
+                    }
+                    friends.splice(friendIndex, 1);
+                    calculate(); // Recalculate amounts
+                    showFriends(); // Refresh friends list
+                    console.dir('friend removed', friends);
+                });
+            }
+
+        }
+
     }
 
     function addItem(friendIndex) {
@@ -170,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (removeItemBtn.length > 0) {
             for (let i = 0; i < removeItemBtn.length; i++) {
                 removeItemBtn[i].addEventListener('click', function (e) {
-                    let itemIndex = e.target.dataset.itemIndex;
+                    let itemIndex = removeItemBtn[i].dataset.itemIndex;
                     friends[friendIndex].items.splice(itemIndex, 1);
                     showItems(friendIndex);
                     calculate(); // Recalculate amounts
@@ -270,7 +297,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 lastFriendIndex = friends.length - 1;
                 stepTwo = stepTwo.replace('{::FRIEND_NAME::}', friendName);
                 offCanvas.querySelector('.offcanvas-body').innerHTML = stepTwo;
-                console.log('last friend index', lastFriendIndex);
                 addItem(lastFriendIndex);
             }
         });
