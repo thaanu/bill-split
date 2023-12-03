@@ -139,6 +139,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     bsOffCanvas.show();
 
+                    addItem(friendIndex);
+
                 });
             });
 
@@ -197,30 +199,65 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function showItems(friendIndex, editable = false) {
+    function showItems(friendIndex) {
         let items = friends[friendIndex].items;
         let h = '';
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
+
                 h += `
-                <div class="card my-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-4 py-2">${i+1}. ${items[i].description}</div>
-                            <div class="col-4 py-2">${items[i].amount}</div>
-                            <div class="col-4">
-                                <button type="button" data-item-index="${i}" class="remove-item-btn btn btn-light"><i class="fas fa-trash"></i></button>
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">${i+1}. <input type="text" data-field-type="description" data-item-index="${i}" value="${items[i].description}" class="form-control item-field" autocomplete="off" /></div>
+                                <div class="col-4"><input type="text" data-field-type="amount" data-item-index="${i}" value="${items[i].amount}" class="form-control item-field" autocomplete="off" /></div>
+                                <div class="col-4">
+                                    <button type="button" data-item-index="${i}" class="remove-item-btn btn btn-light"><i class="fas fa-trash"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                `;
+                    `;
+
             }
         }
         offCanvas.querySelector('#item-list').innerHTML = h;
 
         // Remove Item
         let removeItemBtn = offCanvas.querySelectorAll('.remove-item-btn');
+        removeItems(removeItemBtn, friendIndex);
+
+        // Update item fields
+        let itemFields = offCanvas.querySelectorAll('.item-field');
+        if (itemFields.length > 0) {
+            itemFields.forEach(field => {
+                field.addEventListener('keyup', function (e) {
+                    if (e.keyCode == 9 || e.keyCode == 13) { return false; }
+                    let itemIndex = field.dataset.itemIndex;
+                    let fieldType = field.dataset.fieldType;
+                    let value = field.value;
+
+                    if (fieldType == 'description') {
+                        friends[friendIndex].items[itemIndex].description = value;
+                    }
+
+                    if (fieldType == 'amount') {
+                        if ( ! isNumber(value) ) {
+                            toastr.error('Please enter a number');
+                            return false;
+                        }
+                        friends[friendIndex].items[itemIndex].amount = value;
+                        calculate(); // Recalculate amounts
+                        showFriends(); // Refresh friends list
+                    }
+
+                });
+            });
+        }
+
+    }
+
+    function removeItems(removeItemBtn, friendIndex) {
         if (removeItemBtn.length > 0) {
             for (let i = 0; i < removeItemBtn.length; i++) {
                 removeItemBtn[i].addEventListener('click', function (e) {
@@ -232,7 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         }
-
     }
 
     const lookupFields = document.querySelectorAll('.lookup-field');
