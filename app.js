@@ -11,9 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let sharedDiscountAmount = 0;
 
     function isNumber(str) {
-        if (isNaN(str)) {
-            return false;
-        }
+        if (isNaN(str)) { return false; }
         return true;
     }
 
