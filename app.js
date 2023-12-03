@@ -22,6 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector('#total-amount').innerHTML = `MVR ${formatedTotal}`;
     }
 
+    function showFriendTotal(amount) {
+        return 'MVR ' + (Math.round(totalAmount * 100) / 100).toFixed(2);
+    }
+
     function zeroCorrection(amount) {
         if ( amount == '' ) {
             return 0;
@@ -81,14 +85,22 @@ document.addEventListener("DOMContentLoaded", function () {
         let h = '';
         if (friends.length > 0) {
             for (let i = 0; i < friends.length; i++) {
-                h += `<div class="row">
-                    <div class="col-4">${friends[i].name}</div>
-                    <div class="col-4">${friends[i].total}</div>
-                    <div class="col-4">
-                        <button type="button" class="edit-friend-btn btn btn-light" data-friend-index="${i}">Update</button>
-                        <button type="button" class="remove-friend-btn btn btn-light" data-friend-index="${i}">T</button>
+                h += `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <a href="#" class="edit-friend-btn" data-friend-index="${i}">${friends[i].name}</a>
+                            </div>
+                            <div class="col-4 py-2">`+showFriendTotal(friends[i].total)+`</div>
+                            <div class="col-2">
+                                <button type="button" class="remove-friend-btn btn btn-light" data-friend-index="${i}"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
                     </div>
-                </div>`;
+                </div>
+            `;
+                
             }
         }
         document.querySelector('#friends-list').innerHTML = h;
@@ -136,13 +148,19 @@ document.addEventListener("DOMContentLoaded", function () {
         let h = '';
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
-                h += `<div class="row my-3">
-                    <div class="col-4">${items[i].description}</div>
-                    <div class="col-4">${items[i].amount}</div>
-                    <div class="col-4">
-                        <button type="button" data-item-index="${i}" class="remove-item-btn btn btn-light">T</button>
+                h += `
+                <div class="card my-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 py-2">${i+1}. ${items[i].description}</div>
+                            <div class="col-4 py-2">${items[i].amount}</div>
+                            <div class="col-4">
+                                <button type="button" data-item-index="${i}" class="remove-item-btn btn btn-light"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
                     </div>
-                </div>`;
+                </div>
+                `;
             }
         }
         offCanvas.querySelector('#item-list').innerHTML = h;
@@ -220,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <label class="form-label" for="friend-name">Friend Name</label>
                 <input type="text" id="friend-name" class="form-control" autocomplete="off" />
             </div>
-            <button type="button" id="add-friend-btn" class="btn btn-primary">Add Friend</button>
+            <button type="button" id="add-friend-btn" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Friend</button>
         `;
 
         let stepTwo = `
@@ -233,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <label class="form-label" for="item-price">Item Price</label>
                 <input type="text" id="item-price" class="form-control" autocomplete="off" />
             </div>
-            <button type="button" id="add-item-btn" class="btn btn-primary">Add Item</button>
+            <button type="button" id="add-item-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Item</button>
             <div id="item-list"></div>
         `;
 
