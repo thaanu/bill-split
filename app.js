@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let sharedDiscountAmount = 0;
 
     function isNumber(str) {
-        if (isNaN(str)) { return false; }
+        if (isNaN(str)) {
+            return false;
+        }
         return true;
     }
 
@@ -25,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function zeroCorrection(amount) {
-        if ( amount == '' ) {
+        if (amount == '') {
             return 0;
         }
         return parseFloat(amount);
@@ -89,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="col-6 py-2">
                                 <a href="#" class="edit-friend-btn" data-friend-index="${i}">${friends[i].name}</a>
                             </div>
-                            <div class="col-4 py-2">`+showFriendTotal(friends[i].total)+`</div>
+                            <div class="col-4 py-2">` + showFriendTotal(friends[i].total) + `</div>
                             <div class="col-2">
                                 <button type="button" class="remove-friend-btn btn btn-light" data-friend-index="${i}"><i class="fa-solid fa-trash"></i></button>
                             </div>
@@ -97,29 +99,55 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </div>
             `;
-                
+
             }
         }
         document.querySelector('#friends-list').innerHTML = h;
 
-        if ( friends.length > 0 ) {
+        if (friends.length > 0) {
 
             // Update friend
-            // let updateBtns = document.querySelectorAll('.update')
-            // for ( let i = 0; i < friends.length; i++ ) {
+            let updateBtns = document.querySelectorAll('.edit-friend-btn')
+            updateBtns.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    let friendIndex = button.dataset.friendIndex;
+                    let theFriend = friends[friendIndex];
 
-            // }
+                    const bsOffCanvas = new bootstrap.Offcanvas(offCanvas);
+                    offCanvas.querySelector('#offcanvasLabel').innerHTML = 'Edit Friend';
+
+                    let html = `
+                        <p>Enter items for {::FRIEND_NAME::}</p>
+                        <div class="mb-3">
+                            <label class="form-label" for="item-name">Item Name</label>
+                            <input type="text" id="item-name" class="form-control" autocomplete="off" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="item-price">Item Price</label>
+                            <input type="text" id="item-price" class="form-control" autocomplete="off" />
+                        </div>
+                        <button type="button" id="add-item-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Item</button>
+                        <div id="item-list"></div>
+                    `;
+
+                    html = html.replace('{::FRIEND_NAME::}', theFriend.name);
+
+                    offCanvas.querySelector('.offcanvas-body').innerHTML = html;
+
+                    showItems(friendIndex);
+
+                    bsOffCanvas.show();
+
+                });
+            });
 
             // Remove friend
             let removeFriendBtns = document.querySelectorAll('.remove-friend-btn');
-            for ( let i = 0; i < removeFriendBtns.length; i++ ) {
-                removeFriendBtns[i].addEventListener('click', function(ex) {
+            for (let i = 0; i < removeFriendBtns.length; i++) {
+                removeFriendBtns[i].addEventListener('click', function (ex) {
                     ex.preventDefault();
                     let friendIndex = removeFriendBtns[i].dataset.friendIndex;
-                    if ( friendIndex === undefined ) {
-                        alert(`unable to remove friend ${friendIndex}`);
-                        return false;
-                    }
                     friends.splice(friendIndex, 1);
                     calculate(); // Recalculate amounts
                     showFriends(); // Refresh friends list
@@ -169,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function showItems(friendIndex) {
+    function showItems(friendIndex, editable = false) {
         let items = friends[friendIndex].items;
         let h = '';
         if (items.length > 0) {
