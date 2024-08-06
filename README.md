@@ -1,5 +1,4 @@
 # Bill Split V2
----
 
 This application was developed using:
 
